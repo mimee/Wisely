@@ -5,38 +5,64 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
+import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
-import com.timelord.dao.DatabaseHelper;
+import com.timelord.pojo.Activity;
 import com.timelord.pojo.Category;
 
-public class NewActivity extends OrmLiteBaseActivity<DatabaseHelper> {
-	private Button saveButton;
+public class NewActivity extends BaseEntry {
 	private Spinner categorySpinner;
-	private EditText activityName;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.new_activity);
-		saveButton = (Button) findViewById(R.id.saveButton);
 		categorySpinner = (Spinner) findViewById(R.id.categorySelect);
-		List<Category> categories;
 		try {
-			categories = getHelper().getCategoryDao().queryForAll();
-			String[] categoryNames = new String[categories.size()];
-			int i = 0;
+			List<CharSequence> categoryNames = new ArrayList<CharSequence>();
+			List<Category> categories = getHelper().getCategoryDao()
+					.queryForAll();
 			for (Category category : categories) {
-				categoryNames[i++] = category.getName();
+				categoryNames.add(category.getName());
 			}
-			// categorySpinner.setPrompt(categoryNames);
+			ArrayAdapter<CharSequence> arrayAdapter = new ArrayAdapter<CharSequence>(
+					this, android.R.layout.simple_spinner_dropdown_item,
+					categoryNames);
+			categorySpinner.setAdapter(arrayAdapter);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e(NewActivity.class.getName(), e.getMessage(), e);
 		}
-		activityName = (EditText) findViewById(R.id.activityNameEditText);
+	}
+
+	public void onClick(View v) {
+		Activity activity = new Activity();
+		activity.setName(getNameEntried());
+		String categoryName = categorySpinner.getSelectedItem().toString();
+		try {
+			Category category = (Category) getHelper().getCategoryDao()
+					.queryForEq("name", categoryName).get(0);
+			activity.setCategory(category);
+			getHelper().getActivityDao().create(activity);
+		} catch (SQLException e) {
+			Log.e(NewCategory.class.getName(), e.getMessage(), e);
+		}
+		finish();
+	}
+
+	@Override
+	protected int getContentView() {
+		return R.layout.new_activity;
+	}
+
+	@Override
+	protected int getSaveButtonId() {
+		return R.id.activitySaveButton;
+	}
+
+	@Override
+	protected int getNameEditId() {
+		return R.id.activityNameEdit;
 	}
 }

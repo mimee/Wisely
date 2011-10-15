@@ -8,7 +8,7 @@
 				android:layout_height="wrap_content" android:text="Activity Name" />
 		</TableRow>
 		<TableRow>
-			<EditText android:id="@+id/activityNameEditText"
+			<EditText android:id="@+id/activityNameEdit"
 				android:layout_height="wrap_content" android:layout_width="wrap_content"
 				android:layout_weight="1" />
 		</TableRow>
@@ -19,7 +19,7 @@
 		</TableRow>
 		<TableRow>
 			<Button android:layout_height="wrap_content" android:text="Save"
-				android:id="@+id/saveButton" android:layout_width="match_parent"
+				android:id="@+id/activitySaveButton" android:layout_width="match_parent"
 				android:layout_weight="1" />
 		</TableRow>
 	</TableLayout>

@@ -1,17 +1,12 @@
 package com.timelord;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import android.util.Log;
+import android.view.View;
 import android.widget.Button;
-import android.widget.SimpleAdapter;
 
-import com.timelord.pojo.Activity;
-
-public class ListActivity extends BaseListActivity {
+public class ListActivity extends BaseList {
 
 	@Override
 	protected int getContentView() {
@@ -19,26 +14,8 @@ public class ListActivity extends BaseListActivity {
 	}
 
 	@Override
-	protected void fillData() {
-		String[] titles = new String[] { "activityName" };
-		List<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
-		List<Activity> activities;
-		try {
-			activities = getHelper().getActivityDao().queryForAll();
-			HashMap<String, String> map = new HashMap<String, String>();
-			for (Activity activity : activities) {
-				map.put("activityName", activity.getName());
-			}
-			data.add(map);
-		} catch (SQLException e) {
-			Log.e(ListActivity.class.getName(), e.getMessage(), e);
-		}
-
-		int[] to = new int[] { R.id.activityRow };
-		SimpleAdapter simpleAdapter = new SimpleAdapter(this, data,
-				R.layout.activity_row, titles, to);
-		setListAdapter(simpleAdapter);
-
+	protected List<?> getRowObjects() throws SQLException {
+		return getHelper().getActivityDao().queryForAll();
 	}
 
 	@Override
@@ -46,4 +23,30 @@ public class ListActivity extends BaseListActivity {
 		return (Button) findViewById(R.id.newActivityButton);
 	}
 
+	public void startActivityHandler(View view) {
+
+	}
+
+	public void editActivityHandler(View view) {
+
+	}
+
+	public void deleteActivityHandler(View view) {
+
+	}
+
+	@Override
+	protected Class<?> getEntryClass() {
+		return NewActivity.class;
+	}
+
+	@Override
+	protected int getRowLayout() {
+		return R.layout.activity_row;
+	}
+
+	@Override
+	protected int[] getRowId() {
+		return new int[] { R.id.activityRow };
+	}
 }
