@@ -1,10 +1,12 @@
 package com.timelord;
 
-import java.sql.SQLException;
 import java.util.List;
 
+import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
+
+import com.timelord.pojo.Activity;
 
 public class ListActivity extends BaseList {
 
@@ -14,8 +16,8 @@ public class ListActivity extends BaseList {
 	}
 
 	@Override
-	protected List<?> getRowObjects() throws SQLException {
-		return getHelper().getActivityDao().queryForAll();
+	protected List<?> getRowObjects() {
+		return getHelper().getAllObjects(Activity.class);
 	}
 
 	@Override
@@ -28,11 +30,17 @@ public class ListActivity extends BaseList {
 	}
 
 	public void editActivityHandler(View view) {
-
+		Intent i = new Intent(this, getEntryClass());
+		i.putExtra("selectedItem", getSelectedItem(view));
+		startActivity(i);
 	}
 
 	public void deleteActivityHandler(View view) {
-
+		String name = getSelectedItem(view);
+		Activity activity = (Activity) getHelper().getObjectByName(name,
+				Activity.class);
+		getHelper().deleteObject(activity, Activity.class);
+		refreshData();
 	}
 
 	@Override

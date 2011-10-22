@@ -1,6 +1,7 @@
 package com.timelord.dao;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,6 +13,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.timelord.R;
 import com.timelord.pojo.Activity;
+import com.timelord.pojo.BaseEntity;
 import com.timelord.pojo.Category;
 
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
@@ -53,14 +55,14 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		}
 	}
 
-	public Dao<Activity, Integer> getActivityDao() throws SQLException {
+	private Dao<Activity, Integer> getActivityDao() throws SQLException {
 		if (activityDao == null) {
 			activityDao = getDao(Activity.class);
 		}
 		return activityDao;
 	}
 
-	public Dao<Category, Integer> getCategoryDao() throws SQLException {
+	private Dao<Category, Integer> getCategoryDao() throws SQLException {
 		if (categoryDao == null) {
 			categoryDao = getDao(Category.class);
 		}
@@ -90,4 +92,89 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		}
 	}
 
+	public BaseEntity getObjectByName(String name, Class<?> classType) {
+		try {
+			if (classType == Category.class) {
+				Category category = (Category) getCategoryDao().queryForEq(
+						"name", name).get(0);
+				return category;
+			}
+			if (classType == Activity.class) {
+				Activity activity = (Activity) getActivityDao().queryForEq(
+						"name", name).get(0);
+				return activity;
+			}
+		} catch (Exception e) {
+			Log.e(DatabaseHelper.class.getName(), e.getMessage(), e);
+		}
+		return null;
+	}
+
+	public List<?> getAllObjects(Class<?> classType) {
+		try {
+			if (classType == Category.class) {
+				return getCategoryDao().queryForAll();
+			}
+			if (classType == Activity.class) {
+				return getActivityDao().queryForAll();
+			}
+		} catch (Exception e) {
+			Log.e(DatabaseHelper.class.getName(), e.getMessage(), e);
+		}
+		return null;
+	}
+
+	public boolean saveObject(BaseEntity baseEntity, Class<?> classType,
+			String name) {
+		try {
+			if (classType == Category.class) {
+				if (name == null) {
+					getCategoryDao().create((Category) baseEntity);
+					return true;
+				} else {
+					Category category = (Category) getObjectByName(name,
+							Category.class);
+					category.setName(baseEntity.getName());
+					getCategoryDao().update(category);
+					return true;
+				}
+			}
+			if (classType == Activity.class) {
+				if (name == null) {
+					getActivityDao().create((Activity) baseEntity);
+					return true;
+				} else {
+					Activity activity = (Activity) getObjectByName(name,
+							Activity.class);
+					activity.setName(baseEntity.getName());
+					activity.setCategory(((Activity) baseEntity).getCategory());
+					getActivityDao().update(activity);
+					return true;
+				}
+			}
+		} catch (Exception e) {
+			Log.e(DatabaseHelper.class.getName(), e.getMessage(), e);
+		}
+		return false;
+	}
+
+	public boolean deleteObject(BaseEntity baseEntity, Class<?> classType) {
+		try {
+			if (classType == Category.class) {
+				Category category = (Category) getObjectByName(
+						baseEntity.getName(), Category.class);
+				getCategoryDao().delete(category);
+				return true;
+			}
+			if (classType == Activity.class) {
+				Activity activity = (Activity) getObjectByName(
+						baseEntity.getName(), Activity.class);
+				getActivityDao().delete(activity);
+				return true;
+			}
+		} catch (Exception e) {
+			Log.e(DatabaseHelper.class.getName(), e.getMessage(), e);
+		}
+		return false;
+	}
 }

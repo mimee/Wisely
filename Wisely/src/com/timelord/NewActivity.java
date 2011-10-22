@@ -1,11 +1,9 @@
 package com.timelord;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -20,34 +18,26 @@ public class NewActivity extends BaseEntry {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		categorySpinner = (Spinner) findViewById(R.id.categorySelect);
-		try {
-			List<CharSequence> categoryNames = new ArrayList<CharSequence>();
-			List<Category> categories = getHelper().getCategoryDao()
-					.queryForAll();
-			for (Category category : categories) {
-				categoryNames.add(category.getName());
-			}
-			ArrayAdapter<CharSequence> arrayAdapter = new ArrayAdapter<CharSequence>(
-					this, android.R.layout.simple_spinner_dropdown_item,
-					categoryNames);
-			categorySpinner.setAdapter(arrayAdapter);
-		} catch (SQLException e) {
-			Log.e(NewActivity.class.getName(), e.getMessage(), e);
+		List<CharSequence> categoryNames = new ArrayList<CharSequence>();
+		List<?> categories = getHelper().getAllObjects(Category.class);
+		for (Object category : categories) {
+			categoryNames.add(((Category) category).getName());
 		}
+		ArrayAdapter<CharSequence> arrayAdapter = new ArrayAdapter<CharSequence>(
+				this, android.R.layout.simple_spinner_dropdown_item,
+				categoryNames);
+		categorySpinner.setAdapter(arrayAdapter);
 	}
 
 	public void onClick(View v) {
 		Activity activity = new Activity();
 		activity.setName(getNameEntried());
 		String categoryName = categorySpinner.getSelectedItem().toString();
-		try {
-			Category category = (Category) getHelper().getCategoryDao()
-					.queryForEq("name", categoryName).get(0);
-			activity.setCategory(category);
-			getHelper().getActivityDao().create(activity);
-		} catch (SQLException e) {
-			Log.e(NewCategory.class.getName(), e.getMessage(), e);
-		}
+		Category category = (Category) getHelper().getObjectByName(
+				categoryName, Category.class);
+		activity.setCategory(category);
+
+		getHelper().saveObject(activity, Activity.class, getSelectedItem());
 		finish();
 	}
 
@@ -64,5 +54,22 @@ public class NewActivity extends BaseEntry {
 	@Override
 	protected int getNameEditId() {
 		return R.id.activityNameEdit;
+	}
+
+	@Override
+	protected void fillData(String selectedItem) {
+		if (selectedItem == null) {
+			return;
+		}
+		Activity activity = (Activity) getHelper().getObjectByName(
+				selectedItem, Activity.class);
+		getNameEdit().setText(activity.getName());
+		for (int i = 0; i < categorySpinner.getChildCount(); i++) {
+			if (activity.getCategory().getName()
+					.equals(categorySpinner.getItemAtPosition(i))) {
+				categorySpinner.setSelection(i);
+				break;
+			}
+		}
 	}
 }

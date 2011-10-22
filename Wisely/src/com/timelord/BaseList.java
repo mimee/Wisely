@@ -1,14 +1,14 @@
 package com.timelord;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.j256.ormlite.android.apptools.OrmLiteBaseListActivity;
 import com.timelord.dao.DatabaseHelper;
@@ -26,7 +26,7 @@ public abstract class BaseList extends OrmLiteBaseListActivity<DatabaseHelper>
 
 	protected abstract int[] getRowId();
 
-	protected abstract List<?> getRowObjects() throws SQLException;
+	protected abstract List<?> getRowObjects();
 
 	/** Called when the activity is first created. */
 	@Override
@@ -37,13 +37,9 @@ public abstract class BaseList extends OrmLiteBaseListActivity<DatabaseHelper>
 		refreshData();
 	}
 
-	private void refreshData() {
-		try {
-			setListAdapter(new EntityAdapter().getEntityAdapter(this,
-					getRowObjects(), getRowLayout(), getRowId()));
-		} catch (SQLException e) {
-			Log.e(BaseList.class.getName(), e.getMessage(), e);
-		}
+	protected void refreshData() {
+		setListAdapter(new EntityAdapter().getEntityAdapter(this,
+				getRowObjects(), getRowLayout(), getRowId()));
 	}
 
 	@Override
@@ -52,8 +48,17 @@ public abstract class BaseList extends OrmLiteBaseListActivity<DatabaseHelper>
 		refreshData();
 	}
 
-	public void onClick(View v) {
+	/**
+	 * New <?> button clicked
+	 */
+	public void onClick(View view) {
 		Intent i = new Intent(this, getEntryClass());
 		startActivity(i);
+	}
+
+	public String getSelectedItem(View view) {
+		LinearLayout vwParentRow = (LinearLayout) view.getParent();
+		TextView child = (TextView) vwParentRow.getChildAt(0);
+		return (String) child.getText();
 	}
 }

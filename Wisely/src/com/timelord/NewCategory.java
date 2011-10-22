@@ -1,7 +1,5 @@
 package com.timelord;
 
-import java.sql.SQLException;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,11 +17,7 @@ public class NewCategory extends BaseEntry {
 		Category category = new Category();
 		category.setName(getNameEntried());
 		Log.i(NewCategory.class.getName(), getNameEntried());
-		try {
-			getHelper().getCategoryDao().create(category);
-		} catch (SQLException e) {
-			Log.e(NewCategory.class.getName(), e.getMessage(), e);
-		}
+		getHelper().saveObject(category, Category.class, getSelectedItem());
 		finish();
 	}
 
@@ -40,6 +34,16 @@ public class NewCategory extends BaseEntry {
 	@Override
 	protected int getNameEditId() {
 		return R.id.categoryNameEdit;
+	}
+
+	@Override
+	protected void fillData(String selectedItem) {
+		if (selectedItem == null) {
+			return;
+		}
+		Category category = (Category) getHelper().getObjectByName(
+				selectedItem, Category.class);
+		getNameEdit().setText(category.getName());
 	}
 
 }
