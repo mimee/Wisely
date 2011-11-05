@@ -1,4 +1,4 @@
-package com.timelord;
+package com.timelord.activity;
 
 import java.util.ArrayList;
 import java.util.HashMap;

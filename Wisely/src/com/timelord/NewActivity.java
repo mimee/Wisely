@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.timelord.activity.BaseEntry;
 import com.timelord.pojo.Activity;
 import com.timelord.pojo.Category;
 

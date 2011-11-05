@@ -9,10 +9,12 @@ import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.timelord.R;
 import com.timelord.pojo.Activity;
+import com.timelord.pojo.ActivityLog;
 import com.timelord.pojo.BaseEntity;
 import com.timelord.pojo.Category;
 
@@ -26,6 +28,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	private Dao<Category, Integer> categoryDao = null;
 
+	private Dao<ActivityLog, Integer> activityLogDao = null;
+
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION,
 				R.raw.ormlite_config);
@@ -35,6 +39,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	public void onCreate(SQLiteDatabase arg0, ConnectionSource connectionSource) {
 		try {
 			Log.i(DatabaseHelper.class.getName(), "onCreate");
+			TableUtils.createTable(connectionSource, ActivityLog.class);
 			TableUtils.createTable(connectionSource, Activity.class);
 			TableUtils.createTable(connectionSource, Category.class);
 
@@ -60,6 +65,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			activityDao = getDao(Activity.class);
 		}
 		return activityDao;
+	}
+
+	private Dao<ActivityLog, Integer> getActivityLogDao() throws SQLException {
+		if (activityLogDao == null) {
+			activityLogDao = getDao(ActivityLog.class);
+		}
+		return activityLogDao;
 	}
 
 	private Dao<Category, Integer> getCategoryDao() throws SQLException {
@@ -152,6 +164,32 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					return true;
 				}
 			}
+		} catch (Exception e) {
+			Log.e(DatabaseHelper.class.getName(), e.getMessage(), e);
+		}
+		return false;
+	}
+
+	public boolean saveLog(ActivityLog activityLog) {
+		try {
+			getActivityLogDao().create(activityLog);
+			return true;
+		} catch (Exception e) {
+			Log.e(DatabaseHelper.class.getName(), e.getMessage(), e);
+		}
+		return false;
+	}
+
+	public boolean updateLog(ActivityLog activityLog) {
+		try {
+			PreparedQuery<ActivityLog> preparedQuery = getActivityLogDao()
+					.queryBuilder().orderBy("start", false).where()
+					.isNull("end").prepare();
+			ActivityLog previousLog = getActivityLogDao().queryForFirst(
+					preparedQuery);
+			previousLog.setEnd(activityLog.getEnd());
+			getActivityLogDao().update(previousLog);
+			return true;
 		} catch (Exception e) {
 			Log.e(DatabaseHelper.class.getName(), e.getMessage(), e);
 		}

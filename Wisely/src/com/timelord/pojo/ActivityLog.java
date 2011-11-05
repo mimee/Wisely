@@ -1,15 +1,16 @@
 package com.timelord.pojo;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldForeign;
+import com.j256.ormlite.field.DatabaseFieldSimple;
 import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "activityLogs")
-public class AcitvityLog implements Serializable {
+public class ActivityLog implements Serializable {
 
 	/**
 	 * 
@@ -19,15 +20,15 @@ public class AcitvityLog implements Serializable {
 	@DatabaseField(generatedId = true)
 	private int id;
 
-	@DatabaseField(canBeNull = false)
+	@DatabaseFieldSimple(canBeNull = false)
 	@DatabaseFieldForeign(foreign = true)
 	private Activity activity;
 
 	@DatabaseField(dataType = DataType.DATE, canBeNull = false)
-	private Timestamp start;
+	private Date start;
 
 	@DatabaseField(dataType = DataType.DATE, canBeNull = true)
-	private Timestamp end;
+	private Date end;
 
 	public int getId() {
 		return id;
@@ -45,19 +46,19 @@ public class AcitvityLog implements Serializable {
 		this.activity = activity;
 	}
 
-	public Timestamp getStart() {
+	public Date getStart() {
 		return start;
 	}
 
-	public void setStart(Timestamp start) {
+	public void setStart(Date start) {
 		this.start = start;
 	}
 
-	public Timestamp getEnd() {
+	public Date getEnd() {
 		return end;
 	}
 
-	public void setEnd(Timestamp end) {
+	public void setEnd(Date end) {
 		this.end = end;
 	}
 }

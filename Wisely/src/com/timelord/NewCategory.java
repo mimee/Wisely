@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.timelord.activity.BaseEntry;
 import com.timelord.pojo.Category;
 
 public class NewCategory extends BaseEntry {

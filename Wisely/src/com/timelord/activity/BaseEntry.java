@@ -1,4 +1,4 @@
-package com.timelord;
+package com.timelord.activity;
 
 import android.os.Bundle;
 import android.view.View.OnClickListener;

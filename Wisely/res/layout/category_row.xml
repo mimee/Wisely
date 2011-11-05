@@ -1,4 +1,4 @@
-<LinearLayout android:id="@+id/categoryRowLayout"
+<RelativeLayout android:id="@+id/categoryRowLayout"
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
 	xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -7,11 +7,12 @@
 	</TextView>
 	<Button android:text="Edit" android:id="@+id/editCategoryBtn"
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:onClick="editCategoryHandler">
+		android:onClick="editCategoryHandler" android:layout_toLeftOf="@+id/deleteCategoryBtn">
 	</Button>
 	<Button android:text="Delete" android:id="@+id/deleteCategoryBtn"
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:onClick="deleteCategoryHandler">
+		android:onClick="deleteCategoryHandler"
+		android:layout_alignParentRight="true">
 	</Button>
 
-</LinearLayout>
+</RelativeLayout>

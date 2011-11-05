@@ -1,14 +1,21 @@
 package com.timelord;
 
+import java.util.Date;
 import java.util.List;
 
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 
+import com.timelord.activity.BaseList;
 import com.timelord.pojo.Activity;
+import com.timelord.pojo.ActivityLog;
 
 public class ListActivity extends BaseList {
+
+	private Activity ongoingActivity;
+
+	private Button startButton;
 
 	@Override
 	protected int getContentView() {
@@ -26,7 +33,34 @@ public class ListActivity extends BaseList {
 	}
 
 	public void startActivityHandler(View view) {
+		if (startButton == null) {
+			startButton = (Button) findViewById(R.id.startActivityBtn);
+		}
+		String activityName = getSelectedItem(view);
+		if (getOngoingActivity() == null
+				|| !activityName.equals(getOngoingActivity().getName())) {
+			setOngoingActivity((Activity) getHelper().getObjectByName(
+					activityName, Activity.class));
+			ActivityLog activityLog = new ActivityLog();
+			activityLog.setActivity(getOngoingActivity());
+			activityLog.setStart(new Date(System.currentTimeMillis()));
+			getHelper().saveLog(activityLog);
+			startButton.setText("Stop");
+		} else {
+			ActivityLog activityLog = new ActivityLog();
+			activityLog.setEnd(new Date(System.currentTimeMillis()));
+			getHelper().updateLog(activityLog);
+			setOngoingActivity(null);
+			startButton.setText("Start");
+		}
+	}
 
+	public Activity getOngoingActivity() {
+		return ongoingActivity;
+	}
+
+	public void setOngoingActivity(Activity ongoingActivity) {
+		this.ongoingActivity = ongoingActivity;
 	}
 
 	public void editActivityHandler(View view) {

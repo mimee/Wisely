@@ -17,7 +17,28 @@ canBeNull=false
 # --table-end--
 #################################
 # --table-start--
-dataClass=com.timelord.pojo.AcitvityLog
+dataClass=com.timelord.pojo.Activity
+tableName=activities
+# --table-fields-start--
+# --field-start--
+fieldName=id
+generatedId=true
+# --field-end--
+# --field-start--
+fieldName=name
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=category
+canBeNull=false
+foreign=true
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+#################################
+# --table-start--
+dataClass=com.timelord.pojo.ActivityLog
 tableName=activityLogs
 # --table-fields-start--
 # --field-start--
@@ -40,24 +61,3 @@ dataPersister=DATE
 # --field-end--
 # --table-fields-end--
 # --table-end--
-#################################
-# --table-start--
-dataClass=com.timelord.pojo.Activity
-tableName=activities
-# --table-fields-start--
-# --field-start--
-fieldName=id
-generatedId=true
-# --field-end--
-# --field-start--
-fieldName=name
-canBeNull=false
-# --field-end--
-# --field-start--
-fieldName=category
-canBeNull=false
-foreign=true
-# --field-end--
-# --table-fields-end--
-# --table-end--
-#################################

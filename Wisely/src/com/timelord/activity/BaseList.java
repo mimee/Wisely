@@ -1,4 +1,4 @@
-package com.timelord;
+package com.timelord.activity;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.j256.ormlite.android.apptools.OrmLiteBaseListActivity;
@@ -57,7 +57,7 @@ public abstract class BaseList extends OrmLiteBaseListActivity<DatabaseHelper>
 	}
 
 	public String getSelectedItem(View view) {
-		LinearLayout vwParentRow = (LinearLayout) view.getParent();
+		RelativeLayout vwParentRow = (RelativeLayout) view.getParent();
 		TextView child = (TextView) vwParentRow.getChildAt(0);
 		return (String) child.getText();
 	}
